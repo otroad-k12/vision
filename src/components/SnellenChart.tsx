@@ -7,7 +7,7 @@ const ACUITY_MAP = [200, 100, 70, 50, 40, 30, 20];
 
 // Generate random letters for each line
 function generateRandomLetters(): string[] {
-  return Array.from({ length: 3 }, () => 
+  return Array.from({ length: 3 }, () =>
     POSSIBLE_LETTERS[Math.floor(Math.random() * POSSIBLE_LETTERS.length)]
   );
 }
@@ -42,9 +42,9 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Count correct letters
-    const correctCount = inputValues.reduce((count, input, index) => 
+    const correctCount = inputValues.reduce((count, input, index) =>
       input === currentLetters[index] ? count + 1 : count, 0
     );
 
@@ -90,11 +90,11 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
           </h2>
           <div className="bg-gray-100 rounded-full px-4 py-2 mb-4">
             {CONTENT.TEST.PROGRESS.replace('{current}', String(currentLine + 1))
-                                .replace('{total}', String(ACUITY_MAP.length))}
+              .replace('{total}', String(ACUITY_MAP.length))}
           </div>
         </div>
 
-        <div 
+        <div
           className="bg-white rounded-lg shadow-lg p-8 flex justify-center items-center"
           style={{ minHeight: '200px' }}
         >
@@ -121,7 +121,7 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
               />
             ))}
           </div>
-          
+
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors"

@@ -31,11 +31,10 @@ export function ResultSummary({ results }: ResultProps) {
           <div className="bg-white rounded-lg shadow p-4 text-center">
             <h3 className="font-semibold mb-2">Left Eye</h3>
             <div className="text-2xl font-bold mb-2">{results.left}</div>
-            <div className={`text-sm ${
-              parseInt(results.left.split('/')[1]) <= 30 
-                ? 'text-green-600' 
+            <div className={`text-sm ${parseInt(results.left.split('/')[1]) <= 30
+                ? 'text-green-600'
                 : 'text-yellow-600'
-            }`}>
+              }`}>
               {getResultMessage(results.left)}
             </div>
           </div>
@@ -44,11 +43,10 @@ export function ResultSummary({ results }: ResultProps) {
           <div className="bg-white rounded-lg shadow p-4 text-center">
             <h3 className="font-semibold mb-2">Right Eye</h3>
             <div className="text-2xl font-bold mb-2">{results.right}</div>
-            <div className={`text-sm ${
-              parseInt(results.right.split('/')[1]) <= 30 
-                ? 'text-green-600' 
+            <div className={`text-sm ${parseInt(results.right.split('/')[1]) <= 30
+                ? 'text-green-600'
                 : 'text-yellow-600'
-            }`}>
+              }`}>
               {getResultMessage(results.right)}
             </div>
           </div>
