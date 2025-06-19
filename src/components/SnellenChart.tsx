@@ -54,6 +54,10 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
         setCurrentLine(currentLine + 1);
         setInputValues(['', '', '']);
         setScore(score + 1);
+        // Focus first input after state updates
+        setTimeout(() => {
+          document.getElementById('letter-input-0')?.focus();
+        }, 0);
       } else {
         finishTest();
       }
@@ -71,6 +75,10 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
       setInputValues(['', '', '']);
       setCurrentLetters(generateRandomLetters());
       setScore(0);
+      // Focus first input after state updates
+      setTimeout(() => {
+        document.getElementById('letter-input-0')?.focus();
+      }, 0);
     } else {
       // Both eyes done
       onComplete({ left: acuityValue, right: acuityValue });
