@@ -1,0 +1,88 @@
+/* K12.com Brand Styles */
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');
+
+:root {
+    --k12-blue: #0066cc;
+    --k12-dark-blue: #002B49;
+    --k12-orange: #FF6B00;
+    --k12-gray: #F5F7FA;
+    --k12-text: #333333;
+}
+
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: var(--k12-dark-blue);
+}
+
+/* Button styles */
+.k12-btn {
+    background: linear-gradient(to bottom, #0071e3, #0066cc);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.k12-btn:hover {
+    background: linear-gradient(to bottom, #0077ed, #0071e3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.k12-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.k12-btn-secondary {
+    background: linear-gradient(to bottom, #ff7b1a, #FF6B00);
+}
+
+.k12-btn-secondary:hover {
+    background: linear-gradient(to bottom, #ff8534, #ff7b1a);
+}
+
+/* Input styles */
+.k12-input {
+    border: 2px solid var(--k12-gray);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    transition: border-color 0.2s;
+}
+
+.k12-input:focus {
+    border-color: var(--k12-blue);
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--k12-blue) 20%, transparent);
+}
+
+/* Container styles */
+.k12-container {
+    background-color: var(--k12-gray);
+}
+
+/* Text colors */
+.k12-text-primary {
+    color: var(--k12-blue);
+}
+
+.k12-text-dark {
+    color: var(--k12-dark-blue);
+}
+
+.k12-text-accent {
+    color: var(--k12-orange);
+}

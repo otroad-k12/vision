@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { VisionWidget } from '@k12/vision-widget';
+import { SnellenChart } from './components/SnellenChart';
 import { ResultSummary } from './components/ResultSummary';
+import { Header } from './components/Header';
 
 function App() {
   const [results, setResults] = useState<{ left: string; right: string }>({ left: '', right: '' });
@@ -12,25 +13,34 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {!showResults ? (
-        <VisionWidget
-          theme="light"
-          brandColor="#0066cc"
-          onComplete={handleComplete}
-          distance={3}
-        />
-      ) : (
-        <div className="p-6">
-          <ResultSummary results={results} />
-          <button
-            onClick={() => setShowResults(false)}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Take Test Again
-          </button>
+    <div className="min-h-screen bg-k12-gray font-sans">
+      <Header />
+      <main className="pt-16 pb-12 bg-k12-gray">
+        {!showResults ? (
+          <SnellenChart
+            distance={3}
+            onComplete={handleComplete}
+          />
+        ) : (
+          <div className="container mx-auto px-4">
+            <div className="p-6 bg-white rounded-lg shadow-lg max-w-2xl mx-auto mt-8">
+              <ResultSummary results={results} />
+              <button
+                onClick={() => setShowResults(false)}
+                className="mt-6 w-full k12-btn text-white rounded-lg transition-all font-semibold"
+              >
+                Take Test Again
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+      <footer className="bg-k12-dark-blue text-white py-4 text-center text-sm">
+        <div className="container mx-auto px-4">
+          <p>© 2023 K12 Inc. All rights reserved. This vision test is for screening purposes only.</p>
+          <p className="mt-1 text-white/70">Not a substitute for a professional eye examination.</p>
         </div>
-      )}
+      </footer>
     </div>
   );
 }

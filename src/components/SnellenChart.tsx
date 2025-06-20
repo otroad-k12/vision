@@ -51,7 +51,7 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
 
     console.log(`Eye: ${eye}, Line: ${currentLine}, Correct: ${correctCount}, Current letters:`, currentLetters, 'Input:', inputValues);
 
-    if (correctCount >= 2) {
+    if (correctCount === currentLetters.length) {
       // Passed this line
       if (currentLine < ACUITY_MAP.length - 1) {
         // Update score to current line since they passed it
@@ -60,7 +60,7 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
         } else {
           setRightEyeScore(currentLine);
         }
-        
+
         setCurrentLine(currentLine + 1);
         setInputValues(['', '', '']);
         setTimeout(() => {
@@ -77,11 +77,19 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
           completeTest(leftEyeScore, finalScore);
         }
       }
+    } else if (correctCount > 0) {
+      // Partial pass only if all correct: treat as fail for acuity level
+      const finalScore = Math.max(0, currentLine - 1);
+      if (eye === 'left') {
+        setLeftEyeScore(finalScore);
+        switchToRightEye();
+      } else {
+        setRightEyeScore(finalScore);
+        completeTest(leftEyeScore, finalScore);
+      }
     } else {
-      // Failed this line
-      const finalScore = Math.max(0, currentLine - 1); // Use the previous line as their score
-      console.log(`Failed line ${currentLine}, setting score to ${finalScore}`);
-      
+      // No correct letters: cannot pass
+      const finalScore = Math.max(0, currentLine - 1);
       if (eye === 'left') {
         setLeftEyeScore(finalScore);
         switchToRightEye();
@@ -117,58 +125,73 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
   const size = baseSize * (distance / 3) * ((ACUITY_MAP.length - currentLine) / ACUITY_MAP.length + 0.5);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        {/* COLUMN 1: the image */}
+        <div className="w-full">
+          <img
+            src="https://www.k12.com/wp-content/uploads/2025/02/K12-HP-Hero-Large-Desktop-1536x1071.png"
+            alt="Vision Test Chart"
+            className="w-full h-auto rounded-lg shadow-lg"
+          />
+          {/* Marketing text under image */}
+          <div className="bg-white mt-6 p-5 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-k12-dark-blue mb-2">Vision Screening Test</h2>
+            <p className="text-k12-text mb-4">
+              This quick vision screening helps identify potential vision issues. Stand about 10 feet from your screen and follow the instructions for each eye.
+            </p>
+            <div className="bg-k12-blue/10 p-4 rounded-lg border border-k12-blue/20">
+              <h3 className="text-k12-dark-blue font-semibold mb-1">Important</h3>
+              <p className="text-sm text-k12-text">
+                This is a screening test, not a substitute for a professional exam. If you experience vision problems or eye pain, consult an eye care professional.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* COLUMN 2: the form */}
+        <div className="w-full bg-white rounded-lg p-6 shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">
             {eye === 'left' ? CONTENT.TEST.LEFT_EYE : CONTENT.TEST.RIGHT_EYE}
           </h2>
-          <div className="bg-gray-100 rounded-full px-4 py-2 mb-4">
+
+          <div className="bg-white border border-k12-blue/20 rounded-full px-4 py-2 mb-4 shadow-sm text-k12-dark-blue font-semibold">
             {CONTENT.TEST.PROGRESS.replace('{current}', String(currentLine + 1))
               .replace('{total}', String(ACUITY_MAP.length))}
           </div>
-          <div className="text-sm text-gray-600">
-            {eye === 'left' ? 
-              (leftEyeScore === -1 ? 'Testing left eye...' : `Left eye score: 20/${ACUITY_MAP[leftEyeScore]}`) :
-              (rightEyeScore === -1 ? 'Testing right eye...' : `Right eye score: 20/${ACUITY_MAP[rightEyeScore]}`)}
+
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6 flex justify-center items-center">
+            <div
+              className="font-mono tracking-wider text-k12-dark-blue"
+              style={{ fontSize: `${size}px` }}
+            >
+              {currentLetters.join(' ')}
+            </div>
           </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex justify-center gap-4">
+              {[0, 1, 2].map(index => (
+                <input
+                  key={index}
+                  id={`letter-input-${index}`}
+                  type="text"
+                  maxLength={1}
+                  value={inputValues[index]}
+                  onChange={(e) => handleInputChange(index, e.target.value)}
+                  className="w-12 h-12 text-center text-2xl border-2 border-k12-blue/20 rounded-lg focus:border-k12-blue focus:ring-2 focus:ring-k12-blue/20 uppercase bg-white text-k12-dark-blue font-semibold"
+                  autoFocus={index === 0}
+                />
+              ))}
+            </div>
+            <button
+              type="submit"
+              className="w-full k12-btn text-lg"
+            >
+              Check Letters
+            </button>
+          </form>
         </div>
-
-        <div
-          className="bg-white rounded-lg shadow-lg p-8 flex justify-center items-center"
-          style={{ minHeight: '200px' }}
-        >
-          <div
-            className="font-mono tracking-wider"
-            style={{ fontSize: `${size}px` }}
-          >
-            {currentLetters.join(' ')}
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex justify-center gap-4">
-            {[0, 1, 2].map(index => (
-              <input
-                key={index}
-                id={`letter-input-${index}`}
-                type="text"
-                maxLength={1}
-                value={inputValues[index]}
-                onChange={(e) => handleInputChange(index, e.target.value)}
-                className="w-12 h-12 text-center text-2xl border-2 border-gray-300 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-200 uppercase"
-                autoFocus={index === 0}
-              />
-            ))}
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Check Letters
-          </button>
-        </form>
       </div>
     </div>
   );
