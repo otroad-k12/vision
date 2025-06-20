@@ -1,6 +1,6 @@
+/* Import K12 brand styles */
+@import './styles/k12-brand.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import K12 brand styles */
-@import './styles/k12-brand.css';
