@@ -22,7 +22,8 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
   const [currentLetters, setCurrentLetters] = useState<string[]>([]);
   const [inputValues, setInputValues] = useState(['', '', '']);
   const [eye, setEye] = useState<'left' | 'right'>('left');
-  const [score, setScore] = useState(0);
+  const [leftEyeScore, setLeftEyeScore] = useState(0);
+  const [rightEyeScore, setRightEyeScore] = useState(0);
 
   useEffect(() => {
     setCurrentLetters(generateRandomLetters());
@@ -53,35 +54,40 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
       if (currentLine < ACUITY_MAP.length - 1) {
         setCurrentLine(currentLine + 1);
         setInputValues(['', '', '']);
-        setScore(score + 1);
+        if (eye === 'left') {
+          setLeftEyeScore(currentLine + 1);
+        } else {
+          setRightEyeScore(currentLine + 1);
+        }
         // Focus first input after state updates
         setTimeout(() => {
           document.getElementById('letter-input-0')?.focus();
         }, 0);
       } else {
-        finishTest();
+        finishTest(currentLine);
       }
     } else {
-      finishTest();
+      finishTest(currentLine);
     }
   };
 
-  const finishTest = () => {
-    const acuityValue = `20/${ACUITY_MAP[currentLine]}`;
+  const finishTest = (finalLine: number) => {
     if (eye === 'left') {
-      // Move to right eye
+      // Store left eye score and move to right eye
+      setLeftEyeScore(finalLine);
       setEye('right');
       setCurrentLine(0);
       setInputValues(['', '', '']);
       setCurrentLetters(generateRandomLetters());
-      setScore(0);
-      // Focus first input after state updates
       setTimeout(() => {
         document.getElementById('letter-input-0')?.focus();
       }, 0);
     } else {
-      // Both eyes done
-      onComplete({ left: acuityValue, right: acuityValue });
+      // Test complete - both eyes done
+      setRightEyeScore(finalLine);
+      const leftAcuity = `20/${ACUITY_MAP[leftEyeScore]}`;
+      const rightAcuity = `20/${ACUITY_MAP[finalLine]}`;
+      onComplete({ left: leftAcuity, right: rightAcuity });
     }
   };
 
