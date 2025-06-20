@@ -22,8 +22,8 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
   const [currentLetters, setCurrentLetters] = useState<string[]>([]);
   const [inputValues, setInputValues] = useState(['', '', '']);
   const [eye, setEye] = useState<'left' | 'right'>('left');
-  const [leftEyeScore, setLeftEyeScore] = useState(0);
-  const [rightEyeScore, setRightEyeScore] = useState(0);
+  const [leftEyeAcuity, setLeftEyeAcuity] = useState(ACUITY_MAP[0]); // Start at worst acuity
+  const [rightEyeAcuity, setRightEyeAcuity] = useState(ACUITY_MAP[0]); // Start at worst acuity
 
   useEffect(() => {
     setCurrentLetters(generateRandomLetters());
@@ -49,32 +49,35 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
       input === currentLetters[index] ? count + 1 : count, 0
     );
 
+    // Update acuity based on current line performance
+    const currentAcuity = ACUITY_MAP[currentLine];
     if (correctCount >= 2) {
-      // Passed this line
+      // Passed this line - update acuity if better than previous
+      if (eye === 'left') {
+        setLeftEyeAcuity(Math.min(leftEyeAcuity, currentAcuity));
+      } else {
+        setRightEyeAcuity(Math.min(rightEyeAcuity, currentAcuity));
+      }
+
+      // Move to next line if not at end
       if (currentLine < ACUITY_MAP.length - 1) {
         setCurrentLine(currentLine + 1);
         setInputValues(['', '', '']);
-        if (eye === 'left') {
-          setLeftEyeScore(currentLine + 1);
-        } else {
-          setRightEyeScore(currentLine + 1);
-        }
-        // Focus first input after state updates
         setTimeout(() => {
           document.getElementById('letter-input-0')?.focus();
         }, 0);
       } else {
-        finishTest(currentLine);
+        finishEyeTest();
       }
     } else {
-      finishTest(currentLine);
+      // Failed this line - finish with previous best score
+      finishEyeTest();
     }
   };
 
-  const finishTest = (finalLine: number) => {
+  const finishEyeTest = () => {
     if (eye === 'left') {
-      // Store left eye score and move to right eye
-      setLeftEyeScore(finalLine);
+      // Move to right eye test
       setEye('right');
       setCurrentLine(0);
       setInputValues(['', '', '']);
@@ -83,11 +86,11 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
         document.getElementById('letter-input-0')?.focus();
       }, 0);
     } else {
-      // Test complete - both eyes done
-      setRightEyeScore(finalLine);
-      const leftAcuity = `20/${ACUITY_MAP[leftEyeScore]}`;
-      const rightAcuity = `20/${ACUITY_MAP[finalLine]}`;
-      onComplete({ left: leftAcuity, right: rightAcuity });
+      // Complete test with final acuities
+      onComplete({
+        left: `20/${leftEyeAcuity}`,
+        right: `20/${rightEyeAcuity}`
+      });
     }
   };
 
@@ -143,6 +146,10 @@ export function SnellenChart({ distance, onComplete }: SnellenProps) {
             Check Letters
           </button>
         </form>
+
+        <div className="text-sm text-gray-600 text-center mt-4">
+          Current best: {eye === 'left' ? `20/${leftEyeAcuity}` : `20/${rightEyeAcuity}`}
+        </div>
       </div>
     </div>
   );
